@@ -1,4 +1,4 @@
-# RupiahWatch 💵
+# RupiahWatch
 
 Telegram bot that sends alerts whenever USD/IDR moves 100+ points.
 
