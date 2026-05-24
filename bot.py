@@ -54,6 +54,6 @@ Rp {rate_last:,.0f} → Rp {rate_now:,.0f}
 {sign}{pct:.2f}%
 
 📅 {now.strftime('%d %b %Y')} 🕐 {now.strftime('%H.%M')} WIB"""
-
+    print(msg)
     send_telegram(msg)
     save_rate(rate_now)
