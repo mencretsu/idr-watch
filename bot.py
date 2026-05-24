@@ -5,7 +5,7 @@ import pytz
 
 BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
 CHANNEL_ID = os.environ['TELEGRAM_CHANNEL_ID']
-THRESHOLD = 100  # alert kalau gerak >= 100 poin
+THRESHOLD = 1  # alert kalau gerak >= 100 poin
 
 def get_rate():
     url = "https://api.frankfurter.app/latest?from=USD&to=IDR"
