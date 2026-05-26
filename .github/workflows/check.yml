@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '*/15 * * * *'  # cek tiap 15 menit
   workflow_dispatch:
+permissions:
+  contents: write
 
 jobs:
   check-rate:
