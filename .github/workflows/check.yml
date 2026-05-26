@@ -20,3 +20,10 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+      - name: Save last rate
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add last_rate.txt
+          git commit -m "update last rate" || echo "no changes"
+          git push
