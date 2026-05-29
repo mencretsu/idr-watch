@@ -26,6 +26,18 @@ PAIRS = [
         "from": "JPY", "to": "IDR",
         "channel": os.environ["CHANNEL_JPY_IDR"],
         "file": "last_rate/jpy.txt",
+        "threshold": 1.5,
+    },
+    {
+        "from": "EUR", "to": "IDR",
+        "channel": os.environ["CHANNEL_JPY_IDR"],
+        "file": "last_rate/eur.txt",
+        "threshold": 60,
+    },
+    {
+        "from": "MYR", "to": "IDR",
+        "channel": os.environ["CHANNEL_JPY_IDR"],
+        "file": "last_rate/myr.txt",
         "threshold": 20,
     },
 ]
@@ -54,7 +66,7 @@ def send_telegram(channel, msg):
 
 wib = pytz.timezone("Asia/Jakarta")
 now = datetime.now(wib)
-
+os.makedirs("last_rate", exist_ok=True)
 for pair in PAIRS:
     frm, to = pair["from"], pair["to"]
     rate_now = get_rate(frm, to)
