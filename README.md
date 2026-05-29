@@ -8,4 +8,4 @@ Telegram bot that sends alerts whenever USD/IDR moves 100+ points.
 
 ## Channel
 
-📢 [t.me/rupiahwatch](https://t.me/rupiahwatch)
+📢 [t.me/rupiahwatch](https://t.me/idrwatch)
