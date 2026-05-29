@@ -26,7 +26,7 @@ PAIRS = [
         "from": "JPY", "to": "IDR",
         "channel": os.environ["CHANNEL_JPY_IDR"],
         "file": "last_rate/jpy.txt",
-        "threshold": 1.5,
+        "threshold": 1,
     },
     {
         "from": "EUR", "to": "IDR",
