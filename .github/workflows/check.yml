@@ -1,12 +1,10 @@
-name: IDR/USD Alert
-
+name: IDR Alert Multi-Pair
 on:
   schedule:
-    - cron: '*/15 * * * *'  # cek tiap 15 menit
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 permissions:
   contents: write
-
 jobs:
   check-rate:
     runs-on: ubuntu-latest
@@ -19,11 +17,14 @@ jobs:
       - run: python bot.py
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
-      - name: Save last rate
+          CHANNEL_USD_IDR: ${{ secrets.CHANNEL_USD_IDR }}
+          CHANNEL_CNY_IDR: ${{ secrets.CHANNEL_CNY_IDR }}
+          CHANNEL_SGD_IDR: ${{ secrets.CHANNEL_SGD_IDR }}
+          CHANNEL_JPY_IDR: ${{ secrets.CHANNEL_JPY_IDR }}
+      - name: Save last rates
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add last_rate.txt
-          git commit -m "update last rate" || echo "no changes"
+          git add last_rate/
+          git commit -m "update last rates" || echo "no changes"
           git push
