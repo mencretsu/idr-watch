@@ -21,6 +21,8 @@ jobs:
           CHANNEL_CNY_IDR: ${{ secrets.CHANNEL_CNY_IDR }}
           CHANNEL_SGD_IDR: ${{ secrets.CHANNEL_SGD_IDR }}
           CHANNEL_JPY_IDR: ${{ secrets.CHANNEL_JPY_IDR }}
+          CHANNEL_EUR_IDR: ${{ secrets.CHANNEL_EUR_IDR }}
+          CHANNEL_MYR_IDR: ${{ secrets.CHANNEL_MYR_IDR }}
       - name: Save last rates
         run: |
           git config user.name "github-actions"
