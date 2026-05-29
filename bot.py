@@ -3,57 +3,78 @@ import os
 from datetime import datetime
 import pytz
 
-BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
-CHANNEL_ID = os.environ['TELEGRAM_CHANNEL_ID']
-THRESHOLD = 45
+PAIRS = [
+    {
+        "from": "USD", "to": "IDR",
+        "channel": os.environ["CHANNEL_USD_IDR"],
+        "file": "last_rate/usd.txt",
+        "threshold": 45,
+    },
+    {
+        "from": "CNY", "to": "IDR",
+        "channel": os.environ["CHANNEL_CNY_IDR"],
+        "file": "last_rate/cny.txt",
+        "threshold": 10,   # sesuaikan threshold per pair
+    },
+    {
+        "from": "SGD", "to": "IDR",
+        "channel": os.environ["CHANNEL_SGD_IDR"],
+        "file": "last_rate/sgd.txt",
+        "threshold": 20,
+    },
+    {
+        "from": "JPY", "to": "IDR",
+        "channel": os.environ["CHANNEL_JPY_IDR"],
+        "file": "last_rate/jpy.txt",
+        "threshold": 20,
+    },
+]
 
-def get_rate():
-    url = "https://api.frankfurter.app/latest?from=USD&to=IDR"
+BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
+
+def get_rate(frm, to):
+    url = f"https://api.frankfurter.app/latest?from={frm}&to={to}"
     r = requests.get(url, timeout=10)
-    return r.json()['rates']['IDR']
+    return r.json()["rates"][to]
 
-def get_last_rate():
+def get_last_rate(filepath):
     try:
-        with open('last_rate.txt', 'r') as f:
+        with open(filepath) as f:
             return float(f.read().strip())
     except:
         return None
 
-def save_rate(rate):
-    with open('last_rate.txt', 'w') as f:
+def save_rate(filepath, rate):
+    with open(filepath, "w") as f:
         f.write(str(rate))
 
-def send_telegram(msg):
+def send_telegram(channel, msg):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, json={
-        'chat_id': CHANNEL_ID,
-        'text': msg,
-        'parse_mode': 'HTML'
-    })
+    requests.post(url, json={"chat_id": channel, "text": msg, "parse_mode": "HTML"})
 
-wib = pytz.timezone('Asia/Jakarta')
+wib = pytz.timezone("Asia/Jakarta")
 now = datetime.now(wib)
 
-rate_now = get_rate()
-rate_last = get_last_rate()
+for pair in PAIRS:
+    frm, to = pair["from"], pair["to"]
+    rate_now = get_rate(frm, to)
+    rate_last = get_last_rate(pair["file"])
 
-if rate_last is None:
-    save_rate(rate_now)
-    exit()
+    if rate_last is None:
+        save_rate(pair["file"], rate_now)
+        continue
 
-change = rate_now - rate_last
-pct = (change / rate_last) * 100
+    change = rate_now - rate_last
+    pct = (change / rate_last) * 100
 
-if abs(change) >= THRESHOLD:
-    emoji = "🔴" if change > 0 else "🟢"
-    sign = "+" if change > 0 else ""
-
-    msg = f"""{emoji} <b>USD/IDR Alert!</b>
-
-Rp {rate_last:,.0f} → Rp {rate_now:,.0f}
-{sign}{pct:.2f}%
-
-📆 {now.strftime('%d %b %Y')}"""
-    print(msg)
-    send_telegram(msg)
-    save_rate(rate_now)
+    if abs(change) >= pair["threshold"]:
+        emoji = "🔴" if change > 0 else "🟢"
+        sign = "+" if change > 0 else ""
+        msg = (
+            f"{emoji} <b>{frm}/{to} </b>| {sign}{pct:.2f}%\n\n"
+            f"Rp {rate_last:,.0f} → Rp {rate_now:,.0f}\n\n"
+            f"📆 {now.strftime('%d %b %Y')}"
+        )
+        print(f"[{frm}/{to}] {msg}")
+        send_telegram(pair["channel"], msg)
+        save_rate(pair["file"], rate_now)
