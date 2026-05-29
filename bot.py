@@ -30,13 +30,13 @@ PAIRS = [
     },
     {
         "from": "EUR", "to": "IDR",
-        "channel": os.environ["CHANNEL_JPY_IDR"],
+        "channel": os.environ["CHANNEL_EUR_IDR"],
         "file": "last_rate/eur.txt",
         "threshold": 60,
     },
     {
         "from": "MYR", "to": "IDR",
-        "channel": os.environ["CHANNEL_JPY_IDR"],
+        "channel": os.environ["CHANNEL_MYR_IDR"],
         "file": "last_rate/myr.txt",
         "threshold": 20,
     },
