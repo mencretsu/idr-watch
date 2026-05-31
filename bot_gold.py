@@ -69,7 +69,8 @@ try:
         sign = "+" if change > 0 else ""
         msg = (
             f"{emoji} [ {sign}{pct:.2f}% ]\n\n"
-            f"Rp {gold_last:,.0f} → Rp {gold_now:,.0f} /gram\n\n"
+            f"Rp {gold_last:,.0f} → Rp {gold_now:,.0f} / gram\n\n"
+            f"<i>{now.strftime('%d %b %Y')}</i>"
         )
         print(f"[GOLD] {msg}")
         send_telegram(CHANNEL_GOLD_IDR, msg)
