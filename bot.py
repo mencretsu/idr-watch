@@ -83,7 +83,7 @@ for pair in PAIRS:
         emoji = "🔴" if change > 0 else "🟢"
         sign = "+" if change > 0 else ""
         msg = (
-            f"{emoji} <b>{frm}/{to} </b>| {sign}{pct:.2f}%\n\n"
+            f"{emoji} <b>{frm}/{to} </b>[ {sign}{pct:.2f}% ]\n\n"
             f"Rp {rate_last:,.0f} → Rp {rate_now:,.0f}\n\n"
             f"<i>{now.strftime('%d %b %Y')}</i>"
         )
