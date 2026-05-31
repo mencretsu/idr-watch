@@ -21,13 +21,12 @@ def get_gold_idr_per_gram():
         params={
             "api_key": METALS_API_KEY,
             "base": "USD",
-            "currencies": "XAU",
+            "currencies": "gold",  # fix: XAU → gold
         },
         timeout=10,
     )
     data = r.json()
-    xau_per_usd = data["metals"]["XAU"]
-    usd_per_oz = 1 / xau_per_usd
+    usd_per_oz = data["metals"]["gold"]   # ini langsung harga per troy oz dalam USD
     usd_idr = get_rate("USD", "IDR")
     idr_per_oz = usd_per_oz * usd_idr
     idr_per_gram = idr_per_oz / 31.1035
