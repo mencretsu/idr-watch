@@ -1,0 +1,29 @@
+name: Gold IDR Alert
+on:
+  schedule:
+    - cron: '0 5 * * *'    # 12 siang WIB
+    - cron: '0 17 * * *'   # 12 malam WIB
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  check-gold:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install requests pytz
+      - run: python bot_gold.py
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          METALS_API_KEY: ${{ secrets.METALS_API_KEY }}
+          CHANNEL_GOLD_IDR: ${{ secrets.CHANNEL_GOLD_IDR }}
+      - name: Save last rates
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add last_rate/
+          git commit -m "update gold rate" || echo "no changes"
+          git push
