@@ -8,37 +8,37 @@ PAIRS = [
         "from": "USD", "to": "IDR",
         "channel": os.environ["CHANNEL_USD_IDR"],
         "file": "last_rate/usd.txt",
-        "threshold": 45,
+        "threshold": 20,  # was 45 — USD/IDR gerak 20-50/hari normal
     },
     {
         "from": "CNY", "to": "IDR",
         "channel": os.environ["CHANNEL_CNY_IDR"],
         "file": "last_rate/cny.txt",
-        "threshold": 10,   # sesuaikan threshold per pair
+        "threshold": 5,   # was 10
     },
     {
         "from": "SGD", "to": "IDR",
         "channel": os.environ["CHANNEL_SGD_IDR"],
         "file": "last_rate/sgd.txt",
-        "threshold": 20,
+        "threshold": 10,  # was 20
     },
     {
         "from": "JPY", "to": "IDR",
         "channel": os.environ["CHANNEL_JPY_IDR"],
         "file": "last_rate/jpy.txt",
-        "threshold": 1,
+        "threshold": 0.5, # was 1
     },
     {
         "from": "EUR", "to": "IDR",
         "channel": os.environ["CHANNEL_EUR_IDR"],
         "file": "last_rate/eur.txt",
-        "threshold": 60,
+        "threshold": 30,  # was 60
     },
     {
         "from": "MYR", "to": "IDR",
         "channel": os.environ["CHANNEL_MYR_IDR"],
         "file": "last_rate/myr.txt",
-        "threshold": 20,
+        "threshold": 10,  # was 20
     },
 ]
 
@@ -85,7 +85,7 @@ for pair in PAIRS:
         msg = (
             f"{emoji} <b>{frm}/{to} </b>| {sign}{pct:.2f}%\n\n"
             f"Rp {rate_last:,.0f} → Rp {rate_now:,.0f}\n\n"
-            f"📆 {now.strftime('%d %b %Y')}"
+            f"<i>{now.strftime('%d %b %Y')}</i>"
         )
         print(f"[{frm}/{to}] {msg}")
         send_telegram(pair["channel"], msg)
