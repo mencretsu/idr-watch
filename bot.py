@@ -55,7 +55,7 @@ def get_rate(frm, to):
         data = r.json()
         
         if data.get("result") == "success":
-            return data["rates"][to]
+            return data["conversion_rates"][to]
         else:
             print(f"API Error: {data.get('error-type')}")
             return None
