@@ -1,7 +1,7 @@
 name: IDR Alert Multi-Pair
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '0 0,4,8,12,16,20 * * *'  # Setiap 4 jam: 00:00, 04:00, 08:00, 12:00, 16:00, 20:00
   workflow_dispatch:
 permissions:
   contents: write
@@ -17,6 +17,7 @@ jobs:
       - run: python bot.py
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          EXCHANGERATE_API_KEY: ${{ secrets.EXCHANGERATE_API_KEY }}
           CHANNEL_USD_IDR: ${{ secrets.CHANNEL_USD_IDR }}
           CHANNEL_CNY_IDR: ${{ secrets.CHANNEL_CNY_IDR }}
           CHANNEL_SGD_IDR: ${{ secrets.CHANNEL_SGD_IDR }}
@@ -28,5 +29,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add last_rate/
-          git commit -m "update last rates" || echo "no changes"
+          git commit -m "update last rates [skip ci]" || echo "no changes"
           git push
