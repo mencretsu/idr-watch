@@ -8,7 +8,7 @@ PAIRS = [
         "from": "USD", "to": "IDR",
         "channel": os.environ["CHANNEL_USD_IDR"],
         "file": "last_rate/usd.txt",
-        "threshold": 20,  # was 45 — USD/IDR gerak 20-50/hari normal
+        "threshold": 15,  # was 45 — USD/IDR gerak 20-50/hari normal
     },
     {
         "from": "CNY", "to": "IDR",
