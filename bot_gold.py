@@ -65,7 +65,7 @@ try:
     else:
         change = gold_now - gold_last
         pct = (change / gold_last) * 100
-        emoji = "🔴" if change > 0 else "🟢"
+        emoji = "🟢" if change > 0 else "🔴"
         sign = "+" if change > 0 else ""
         msg = (
             f"{emoji} [ {sign}{pct:.2f}% ]\n\n"
