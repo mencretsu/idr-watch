@@ -2,55 +2,63 @@ import requests
 import os
 from datetime import datetime
 import pytz
+import time
 
 PAIRS = [
     {
         "from": "USD", "to": "IDR",
         "channel": os.environ["CHANNEL_USD_IDR"],
         "file": "last_rate/usd.txt",
-        "threshold": 15,  # was 45 — USD/IDR gerak 20-50/hari normal
+        "threshold": 20,
     },
     {
         "from": "CNY", "to": "IDR",
         "channel": os.environ["CHANNEL_CNY_IDR"],
         "file": "last_rate/cny.txt",
-        "threshold": 5,   # was 10
+        "threshold": 5,
     },
     {
         "from": "SGD", "to": "IDR",
         "channel": os.environ["CHANNEL_SGD_IDR"],
         "file": "last_rate/sgd.txt",
-        "threshold": 10,  # was 20
+        "threshold": 10,
     },
     {
         "from": "JPY", "to": "IDR",
         "channel": os.environ["CHANNEL_JPY_IDR"],
         "file": "last_rate/jpy.txt",
-        "threshold": 0.5, # was 1
+        "threshold": 0.5,
     },
     {
         "from": "EUR", "to": "IDR",
         "channel": os.environ["CHANNEL_EUR_IDR"],
         "file": "last_rate/eur.txt",
-        "threshold": 30,  # was 60
+        "threshold": 30,
     },
     {
         "from": "MYR", "to": "IDR",
         "channel": os.environ["CHANNEL_MYR_IDR"],
         "file": "last_rate/myr.txt",
-        "threshold": 10,  # was 20
+        "threshold": 10,
     },
 ]
 
 BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
+EXCHANGERATE_API_KEY = os.environ["EXCHANGERATE_API_KEY"]
 
 def get_rate(frm, to):
-    """Fetch rate from Frankfurter API v2"""
-    url = f"https://api.frankfurter.dev/v2/rate/{frm}/{to}"
+    """Fetch rate from ExchangeRate-API (hourly update, accurate)"""
+    url = f"https://v6.exchangerate-api.com/v6/{EXCHANGERATE_API_KEY}/latest/{frm}"
     try:
         r = requests.get(url, timeout=10)
         r.raise_for_status()
-        return r.json()["rate"]
+        data = r.json()
+        
+        if data.get("result") == "success":
+            return data["rates"][to]
+        else:
+            print(f"API Error: {data.get('error-type')}")
+            return None
     except requests.exceptions.RequestException as e:
         print(f"Error fetching {frm}/{to}: {e}")
         return None
@@ -81,21 +89,30 @@ wib = pytz.timezone("Asia/Jakarta")
 now = datetime.now(wib)
 os.makedirs("last_rate", exist_ok=True)
 
+print(f"\n{'='*60}")
+print(f"FOREX MONITOR - ExchangeRate-API")
+print(f"Time: {now.strftime('%d %b %Y %H:%M WIB')}")
+print(f"{'='*60}\n")
+
 # Monitor each pair
 for pair in PAIRS:
     frm, to = pair["from"], pair["to"]
+    print(f"[{frm}/{to}] Fetching rate...", end=" ")
+    
     rate_now = get_rate(frm, to)
     
     if rate_now is None:
-        print(f"[{frm}/{to}] Failed to fetch rate, skipping...")
+        print(f"❌ Failed to fetch")
         continue
+    
+    print(f"✓ {rate_now:,.2f}")
     
     rate_last = get_last_rate(pair["file"])
     
     if rate_last is None:
         # First run, just save the rate
         save_rate(pair["file"], rate_now)
-        print(f"[{frm}/{to}] Initialized with rate: {rate_now:,.0f}")
+        print(f"  → Initialized")
         continue
     
     change = rate_now - rate_last
@@ -108,10 +125,17 @@ for pair in PAIRS:
         msg = (
             f"{emoji} <b>{frm}/{to}</b> [{sign}{pct:.2f}%]\n\n"
             f"Rp {rate_last:,.0f} → Rp {rate_now:,.0f}\n"
-            f"Δ {sign}{change:,.0f}\n\n"
+            f"Δ {sign}{change:,.2f}\n\n"
             f"<i>{now.strftime('%d %b %Y %H:%M WIB')}</i>"
         )
-        print(f"[{frm}/{to}] Change detected: {sign}{pct:.2f}%")
+        print(f"  → ALERT! Change: {sign}{pct:.2f}%")
         send_telegram(pair["channel"], msg)
+    else:
+        print(f"  → Change: {pct:+.2f}% (below threshold)")
     
     save_rate(pair["file"], rate_now)
+    time.sleep(0.5)  # Small delay between requests
+
+print(f"\n{'='*60}")
+print(f"Monitor selesai. Next run: +4 jam")
+print(f"{'='*60}\n")
